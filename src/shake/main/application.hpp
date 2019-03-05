@@ -9,6 +9,8 @@
 
 #include "shake/hid/window.hpp"
 
+#include "shake/content/content_manager.hpp"
+
 
 namespace shake {
 
@@ -35,7 +37,8 @@ private:
     using FpsCounter = RunningAverageCounter< float, 120 >;
 
 private:
-    PROPERTY_RW( Window,        window             )
+    PROPERTY_RW( Window,            window              )
+    PROPERTY_RW( content::ContentManager,    content_manager     )
 
     PROPERTY_R( ProcessManager, process_manager     )
     
