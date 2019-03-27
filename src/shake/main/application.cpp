@@ -143,6 +143,8 @@ void Application::run()
         m_content_manager.get_or_load<graphics::Material>( io::Path { "materials/default_voxel_material.json" } )
     };
 
+    const auto font = m_content_manager.get_or_load<graphics::Font>( io::Path{ "fonts/open_sans/open_sans.json" } );
+
     //----------------------------------------------------------------
     // Game Loop
     while ( !window.get_should_close() )
@@ -220,7 +222,7 @@ void Application::run()
         // Draw FPS
         running_average_counter.add_sample( dt );
         const auto fps = static_cast<uint64_t>( std::floor( 1000.f / running_average_counter.get_running_average() ) );
-        graphics::draw( "FPS: " + lexical_cast( fps ), glm::vec2{ 20, 20 } );
+        graphics::draw( "FPS: " + lexical_cast( fps ), glm::vec2{ 20, 20 }, font );
 
         // Swap buffers
         window.swap_buffers();
