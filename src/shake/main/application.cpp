@@ -32,8 +32,7 @@ namespace { // anonymous
 
     glm::vec2 sprite_pos ( 0.f, 0.f );
 
-    const io::Path content_directory { "C:/Users/Berry/Documents/shake2/content/shake" };
-    const io::Path game_content_directory { "C:/Users/Berry/Documents/shake2/content/game1" };
+    const io::Path game_content_directory { "C:/Users/Berry/Documents/shake3/shake_test_game/content/game1/" };
 
 } // namespace anonymous
 
@@ -61,9 +60,7 @@ Application::Application
 
     // content
     m_content_manager.init( m_window.get_glfw_gl_load_proc() );
-    m_content_manager.set_shake_content_directory( content_directory );
     m_content_manager.host_content_directory( game_content_directory );
-    m_content_manager.host_content_directory( content_directory );
 
     // processes 
     m_process_manager
@@ -139,8 +136,14 @@ void Application::run()
 
     const auto voxel_render_pack = graphics::RenderPack3D 
     { 
-        m_content_manager.get_or_load<graphics::VoxelGrid>( io::Path{ "voxel_models/default_voxel_model.vox" } ),
+        m_content_manager.get_or_load<graphics::VoxelGrid>( io::Path{ "voxel_models/procedure/nature.vox" } ),
         m_content_manager.get_or_load<graphics::Material>( io::Path { "materials/default_voxel_material.json" } )
+    };
+
+    const auto fez_render_pack = graphics::RenderPack2D 
+    { 
+        std::make_shared<graphics::Rectangle2D>( 100, 100 ),
+        m_content_manager.get_or_load<graphics::Material>( io::Path{ "materials/sprite_material.json" } )
     };
 
     const auto font = m_content_manager.get_or_load<graphics::Font>( io::Path{ "fonts/open_sans/open_sans.json" } );
@@ -223,6 +226,8 @@ void Application::run()
         running_average_counter.add_sample( dt );
         const auto fps = static_cast<uint64_t>( std::floor( 1000.f / running_average_counter.get_running_average() ) );
         graphics::draw( "FPS: " + lexical_cast( fps ), glm::vec2{ 20, 20 }, font );
+
+        graphics::draw( fez_render_pack, Transform2D{} );
 
         // Swap buffers
         window.swap_buffers();
