@@ -3,7 +3,6 @@
 #include <vector>
 #include <memory>
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "shake/content/content_manager.hpp"
@@ -12,6 +11,7 @@
 #include "shake/core/types/lexical_cast.hpp"
 #include "shake/graphics/camera.hpp"
 #include "shake/graphics/context.hpp"
+
 #include "shake/graphics/draw.hpp"
 #include "shake/graphics/draw_text.hpp"
 #include "shake/graphics/gl.hpp"
@@ -87,6 +87,30 @@ void Application::update()
     m_current_fps = static_cast<uint64_t>( std::floor( 1000.f / m_fps_counter.get_running_average() ) );
 
     m_process_manager.update( m_current_frame_time );
+
+
+    //        
+    //auto& camera = graphics::get_current_camera();
+    //const auto& keyboard = Keyboard::get_instance();
+    //const auto& mouse = Mouse::get_instance();
+
+    //auto translation_velocity = float { 0.01f };
+    //if ( keyboard.is_down( Keyboard::Key::W ) ) { camera->get_transform().translate( -math::axis::z * translation_velocity );   }
+    //if ( keyboard.is_down( Keyboard::Key::S ) ) { camera->get_transform().translate(  math::axis::z * translation_velocity );   }
+    //if ( keyboard.is_down( Keyboard::Key::A ) ) { camera->get_transform().translate( -math::axis::x * translation_velocity );   }
+    //if ( keyboard.is_down( Keyboard::Key::D ) ) { camera->get_transform().translate(  math::axis::x * translation_velocity );   }
+    //if ( keyboard.is_down( Keyboard::Key::E ) ) { camera->get_transform().translate(  math::axis::y * translation_velocity );   }
+    //if ( keyboard.is_down( Keyboard::Key::Q ) ) { camera->get_transform().translate( -math::axis::y * translation_velocity );   }
+    //    
+
+    //auto rotation_velocity = float { 0.01f };
+    //if( mouse.is_down( Mouse::Key::Left ) )
+    //{
+    //    // to prevent introducing rotation by pitching and yawing, you do yaw relative to world
+    //    camera->get_transform().yaw_world       ( -mouse.get_diff_x() * rotation_velocity );
+    //    camera->get_transform().pitch_relative  ( -mouse.get_diff_y() * rotation_velocity );
+    //}
+
 }
 
 
@@ -107,6 +131,7 @@ void Application::run()
 
     auto camera = std::make_shared<graphics::Camera>( 2560, 1440 );
     graphics::set_current_camera( camera );
+    //camera->get_transform().look_in_direction( glm::vec3{ 0.f, 4.f, 0.f } );
 
     //----------------------------------------------------------------
     // Initialize game processes
@@ -136,7 +161,7 @@ void Application::run()
 
     const auto voxel_render_pack = graphics::RenderPack3D 
     { 
-        m_content_manager.get_or_load<graphics::VoxelGrid>( io::Path{ "voxel_models/procedure/nature.vox" } ),
+        m_content_manager.get_or_load<graphics::VoxelGrid>( io::Path{ "voxel_models/berry.vox" } ),
         m_content_manager.get_or_load<graphics::Material>( io::Path { "materials/default_voxel_material.json" } )
     };
 
@@ -148,12 +173,16 @@ void Application::run()
 
     const auto font = m_content_manager.get_or_load<graphics::Font>( io::Path{ "fonts/open_sans/open_sans.json" } );
 
+    double total_time = 0.0;
+
+    auto voxel_transform = Transform3D{};
     //----------------------------------------------------------------
     // Game Loop
     while ( !window.get_should_close() )
     {
         // Get time delta
         const auto dt = stopwatch.get_and_reset();
+        total_time += dt;
 
         const auto& keyboard = Keyboard::get_instance();
         const auto& mouse = Mouse::get_instance();
@@ -165,21 +194,22 @@ void Application::run()
 
         auto& camera = graphics::get_current_camera();
 
-        auto translation_velocity = float { 0.01f * dt };
-        if ( keyboard.is_down( Keyboard::Key::W ) ) { camera->get_transform().translate( -math::axis::z * translation_velocity );   }
-        if ( keyboard.is_down( Keyboard::Key::S ) ) { camera->get_transform().translate(  math::axis::z * translation_velocity );   }
-        if ( keyboard.is_down( Keyboard::Key::A ) ) { camera->get_transform().translate( -math::axis::x * translation_velocity );   }
-        if ( keyboard.is_down( Keyboard::Key::D ) ) { camera->get_transform().translate(  math::axis::x * translation_velocity );   }
-        if ( keyboard.is_down( Keyboard::Key::E ) ) { camera->get_transform().translate(  math::axis::y * translation_velocity );   }
-        if ( keyboard.is_down( Keyboard::Key::Q ) ) { camera->get_transform().translate( -math::axis::y * translation_velocity );   }
+        //auto translation_velocity = float { 0.01f * dt };
+        //if ( keyboard.is_down( Keyboard::Key::W ) ) { camera->get_transform().translate( -math::axis::z * translation_velocity );   }
+        //if ( keyboard.is_down( Keyboard::Key::S ) ) { camera->get_transform().translate(  math::axis::z * translation_velocity );   }
+        //if ( keyboard.is_down( Keyboard::Key::A ) ) { camera->get_transform().translate( -math::axis::x * translation_velocity );   }
+        //if ( keyboard.is_down( Keyboard::Key::D ) ) { camera->get_transform().translate(  math::axis::x * translation_velocity );   }
+        //if ( keyboard.is_down( Keyboard::Key::E ) ) { camera->get_transform().translate(  math::axis::y * translation_velocity );   }
+        //if ( keyboard.is_down( Keyboard::Key::Q ) ) { camera->get_transform().translate( -math::axis::y * translation_velocity );   }
+        //
 
-        auto rotation_velocity = float { 0.01f * dt };
-        if( mouse.is_down( Mouse::Key::Left ) )
-        {
-            // to prevent introducing rotation by pitching and yawing, you do yaw relative to world
-            camera->get_transform().yaw_world       ( -mouse.get_diff_x() * rotation_velocity );
-            camera->get_transform().pitch_relative  ( -mouse.get_diff_y() * rotation_velocity );
-        }
+        //auto rotation_velocity = float { 0.01f * dt };
+        //if( mouse.is_down( Mouse::Key::Left ) )
+        //{
+        //    // to prevent introducing rotation by pitching and yawing, you do yaw relative to world
+        //    camera->get_transform()->yaw_world       ( -mouse.get_diff_x() * rotation_velocity );
+        //    camera->get_transform()->pitch_relative  ( -mouse.get_diff_y() * rotation_velocity );
+        //}
 
 
 
@@ -220,12 +250,34 @@ void Application::run()
             );
         }
 
-        graphics::draw( voxel_render_pack, Transform3D{} );
+        
+        voxel_transform.set_translation( glm::vec3( 
+            ( sin( total_time / 1000 ) * 10 ), 
+            0.0, 
+            ( cos( total_time / 1000 ) * 10 )
+        ) );
+
+        if ( keyboard.is_down( Keyboard::Key::Y ) ) { voxel_transform.yaw_relative( dt );   }
+        if ( keyboard.is_down( Keyboard::Key::U ) ) { voxel_transform.pitch_relative( dt );   }
+        if ( keyboard.is_down( Keyboard::Key::I ) ) { voxel_transform.roll_relative( dt );   }
+        graphics::draw( voxel_render_pack, voxel_transform );
                
         // Draw FPS
         running_average_counter.add_sample( dt );
         const auto fps = static_cast<uint64_t>( std::floor( 1000.f / running_average_counter.get_running_average() ) );
         graphics::draw( "FPS: " + lexical_cast( fps ), glm::vec2{ 20, 20 }, font );
+
+        // Draw FPS
+        const auto camera_position =  camera->get_transform()->get_translation();
+        graphics::draw
+        ( 
+            "Camera Position: " 
+            + lexical_cast( camera_position.x ) + ", " 
+            + lexical_cast( camera_position.y ) + ", "
+            + lexical_cast( camera_position.z ) + ", ", 
+            glm::vec2{ 20, 40 }, 
+            font 
+        );
 
         graphics::draw( fez_render_pack, Transform2D{} );
 
