@@ -1,6 +1,6 @@
 #include "application.hpp"
 
-#include "shake/graphics/gl.hpp"
+#include "shake/graphics/gl/gl.hpp"
 
 
 //----------------------------------------------------------------

@@ -5,7 +5,7 @@
 #include "shake/core/diagnostics/running_average_counter.hpp"
 #include "shake/core/diagnostics/stopwatch.hpp"
 #include "shake/core/process_manager.hpp"
-#include "shake/core/types/macro_property.hpp"
+#include "shake/core/macros/macro_property.hpp"
 
 #include "shake/hid/window.hpp"
 
