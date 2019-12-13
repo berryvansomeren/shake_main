@@ -4,9 +4,31 @@
 
 
 //----------------------------------------------------------------
+void init()
+{
+
+}
+
+//----------------------------------------------------------------
+void update( double dt )
+{
+
+}
+
+//----------------------------------------------------------------
+void destroy()
+{
+
+}
+
+//----------------------------------------------------------------
 int main(int argc, char* argb[])
 {
-    shake::Application application { };
+    auto application = shake::Application 
+    { 
+        init,
+        update,
+        destroy
+    };
     application.run();
-    return EXIT_SUCCESS;
 }
