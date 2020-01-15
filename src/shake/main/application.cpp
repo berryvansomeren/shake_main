@@ -14,7 +14,6 @@
 #include "shake/graphics/draw_text.hpp"
 #include "shake/graphics/gl/gl.hpp"
 #include "shake/graphics/geometry/geometry_3d.hpp"
-#include "shake/graphics/geometry/voxel_grid.hpp"
 #include "shake/graphics/material/uniform.hpp"
 #include "shake/hid/keyboard.hpp"
 #include "shake/hid/mouse.hpp"
@@ -58,6 +57,9 @@ Application::Application
     // content
     m_content_manager.init();
     m_content_manager.host_content_directory( game_content_directory );
+
+    set_target_fps( 60 );
+    set_max_updates_per_frame( 3 );
 }
 
 //----------------------------------------------------------------
@@ -72,7 +74,7 @@ Application::~Application()
 void Application::set_target_fps( const std::uint8_t target_fps )
 {
     m_target_fps        = target_fps;
-    m_update_period_ms  = 1.0 / static_cast<double>( target_fps );
+    m_update_period_ms  = 1000 / static_cast<double>( target_fps );
 }
 
 //----------------------------------------------------------------
@@ -85,6 +87,9 @@ void Application::set_max_updates_per_frame( const std::uint8_t max_updates_per_
 //----------------------------------------------------------------
 void Application::run()
 {
+    const auto default_primitive_2d_shader      = m_content_manager.get_or_load<graphics::Shader>( io::Path { "shaders/default_primitive_2d_shader.glsl" } );
+    const auto default_primitive_2d_material    = std::make_shared<graphics::Material>( default_primitive_2d_shader );
+
     init();
 
     // We enter an infinite update-render-loop,
@@ -121,7 +126,7 @@ void Application::run()
         // We therefore specify a maximum number of logic updates per frame.
         // As a result, simulation time will slow down with heavy loads,
         // while frame rate is (hopefully) preserved.
-        accumulated_residual_time_ms = std::max( accumulated_residual_time_ms, m_max_accumulated_residual_time_ms );
+        accumulated_residual_time_ms = std::min( accumulated_residual_time_ms, m_max_accumulated_residual_time_ms );
         while ( accumulated_residual_time_ms >= m_update_period_ms )
         {
             update( m_update_period_ms );
@@ -137,10 +142,28 @@ void Application::run()
         // instead of redrawing the same thing.
         // This enables us to get back to logic updates ASAP.
         // This will however affect our estimate of FPS a little bit.
-        if ( did_fixed_update )
-        {
-            render();
+        if ( !did_fixed_update ) 
+        { 
+            continue; 
         }
+
+        render();
+        
+        // TEMPORARY below
+
+        graphics::gl::clear( { graphics::gl::FramebufferBitFlag::Color, graphics::gl::FramebufferBitFlag::Depth } );
+
+        // TODO: render stuff
+        default_primitive_2d_material->set_uniform( "u_color", std::make_unique<graphics::UniformVec3>( glm::vec3 { 1.f, 1.f, 0.f } ) );
+        const auto geometry = graphics::make_circle_filled_2D( 0.5f );
+        graphics::draw
+        ( 
+            graphics::RenderPack2D { geometry, default_primitive_2d_material },
+            Transform2D { }
+        );
+
+        m_window.swap_buffers();
+        
     }
 
     destroy();
@@ -165,11 +188,7 @@ void Application::update( const double dt )
 //----------------------------------------------------------------
 void Application::render() 
 {
-    graphics::gl::clear( { graphics::gl::FramebufferBitFlag::Color, graphics::gl::FramebufferBitFlag::Depth } );
-
-    // TODO: render stuff
-
-    m_window.swap_buffers();
+    
 }
 
 //----------------------------------------------------------------
