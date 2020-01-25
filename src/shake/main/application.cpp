@@ -87,7 +87,7 @@ void Application::set_max_updates_per_frame( const std::uint8_t max_updates_per_
 //----------------------------------------------------------------
 void Application::run()
 {
-    const auto default_primitive_2d_shader      = m_content_manager.get_or_load<graphics::Shader>( io::Path { "shaders/default_primitive_2d_shader.glsl" } );
+    const auto default_primitive_2d_shader      = m_content_manager.get_or_load<graphics::Program>( io::Path { "shaders/default_primitive_2d_shader.glsl" } );
     const auto default_primitive_2d_material    = std::make_shared<graphics::Material>( default_primitive_2d_shader );
 
     init();
@@ -154,8 +154,8 @@ void Application::run()
         graphics::gl::clear( { graphics::gl::FramebufferBitFlag::Color, graphics::gl::FramebufferBitFlag::Depth } );
 
         // TODO: render stuff
-        default_primitive_2d_material->set_uniform( "u_color", std::make_unique<graphics::UniformVec3>( glm::vec3 { 1.f, 1.f, 0.f } ) );
-        const auto geometry = graphics::make_circle_filled_2D( 0.5f );
+        default_primitive_2d_material->set_uniform( "u_color", glm::vec3 { 1.f, 1.f, 0.f } );
+        const auto geometry = std::make_shared<graphics::Geometry2D>( graphics::make_circle_filled_2D( 0.5f ) );
         graphics::draw
         ( 
             graphics::RenderPack2D { geometry, default_primitive_2d_material },
