@@ -31,19 +31,21 @@ const io::Path game_content_directory { "C:/Users/Berry/Documents/development/sh
 //----------------------------------------------------------------
 Application::Application
 (
-    const InitCallback& init_callback,
-    const UpdateCallback& update_callback,
-    const DestroyCallback& destroy_callback,
-    const size_t screen_width,
-    const size_t screen_height,
-    const std::string& application_name
+    const InitCallback&     init_callback,
+    const UpdateCallback&   update_callback,
+    const DrawCallback&     draw_callback,
+    const DestroyCallback&  destroy_callback,
+    const size_t            screen_width,
+    const size_t            screen_height,
+    const std::string&      application_name
 )
-    : m_window { screen_width, screen_height, application_name }
-    , m_total_run_time { 0.0 }
-    , m_total_simulation_time { 0.0 }
-    , m_init_callback { init_callback }
-    , m_update_callback { update_callback }
-    , m_destroy_callback { destroy_callback }
+    : m_window                  { screen_width, screen_height, application_name }
+    , m_total_run_time          { 0.0 }
+    , m_total_simulation_time   { 0.0 }
+    , m_init_callback           { init_callback     }
+    , m_update_callback         { update_callback   }
+    , m_draw_callback           { draw_callback     }
+    , m_destroy_callback        { destroy_callback  }
 {
     // graphics
     graphics::gl::init( m_window.get_glfw_gl_load_proc() );
@@ -147,7 +149,7 @@ void Application::run()
             continue; 
         }
 
-        render();
+        draw();
         
         // TEMPORARY below
 
@@ -186,7 +188,7 @@ void Application::update( const double dt )
 }
 
 //----------------------------------------------------------------
-void Application::render() 
+void Application::draw() 
 {
     
 }

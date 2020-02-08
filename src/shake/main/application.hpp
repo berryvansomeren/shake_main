@@ -23,17 +23,19 @@ class Application
 public:
     using InitCallback      = std::function<void()>;
     using UpdateCallback    = std::function<void(double)>;
+    using DrawCallback      = std::function<void()>;
     using DestroyCallback   = std::function<void()>;
 
 public:
     Application
     (
-        const InitCallback& init_callback,
-        const UpdateCallback& update_callback,
-        const DestroyCallback& destroy_callback,
-        const size_t screen_width           = 2560,
-        const size_t screen_height          = 1440,
-        const std::string& application_name = "Shake Engine"
+        const InitCallback&     init_callback,
+        const UpdateCallback&   update_callback,
+        const DrawCallback&     draw_callback,
+        const DestroyCallback&  destroy_callback,
+        const size_t            screen_width        = 2560,
+        const size_t            screen_height       = 1440,
+        const std::string&      application_name    = "Shake Engine"
     );
 
     ~Application();
@@ -49,12 +51,13 @@ public:
     void run();
     void init();
     void update( const double dt );
-    void render();
+    void draw();
     void destroy();
 
 public:
     PROPERTY_RW( InitCallback,      init_callback     )
     PROPERTY_RW( UpdateCallback,    update_callback   )
+    PROPERTY_RW( DrawCallback,      draw_callback     )
     PROPERTY_RW( DestroyCallback,   destroy_callback  )
 
 private:
