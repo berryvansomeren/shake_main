@@ -89,9 +89,7 @@ void Application::set_max_updates_per_frame( const std::uint8_t max_updates_per_
 //----------------------------------------------------------------
 void Application::run()
 {
-    const auto default_primitive_2d_shader      = m_content_manager.get_or_load<graphics::Program>( io::Path { "shaders/default_primitive_2d_shader.glsl" } );
-    const auto default_primitive_2d_material    = std::make_shared<graphics::Material>( default_primitive_2d_shader );
-
+    // Do some initial set-up
     init();
 
     // We enter an infinite update-render-loop,
@@ -105,7 +103,7 @@ void Application::run()
         auto did_fixed_update = false;
 
         // We basically measure how much time has passed since last frame
-        // In that sense the rendering and pre_update steps PRODUCE time.
+        // In that sense the init and rendering steps PRODUCE time.
         // We now have to CONSUME that time by running our logic updates and catch up.
         // Consumption happens in uniformly sized steps.
         const auto frame_time = m_frame_timer.get_and_reset();
@@ -143,29 +141,18 @@ void Application::run()
         // In that case we will simply not update the screen,
         // instead of redrawing the same thing.
         // This enables us to get back to logic updates ASAP.
-        // This will however affect our estimate of FPS a little bit.
+        // This will however affect estimates of FPS.
+        // This also avoid frying your GPU with thousands of frames, 
+        // when nothing computationally expensive is going on!
         if ( !did_fixed_update ) 
         { 
             continue; 
         }
 
-        draw();
-        
-        // TEMPORARY below
-
-        graphics::gl::clear( { graphics::gl::FramebufferBitFlag::Color, graphics::gl::FramebufferBitFlag::Depth } );
-
-        // TODO: render stuff
-        default_primitive_2d_material->set_uniform( "u_color", glm::vec3 { 1.f, 1.f, 0.f } );
-        const auto geometry = std::make_shared<graphics::Geometry2D>( graphics::make_circle_filled_2D( 0.5f ) );
-        graphics::draw
-        ( 
-            graphics::RenderPack2D { geometry, default_primitive_2d_material },
-            Transform2D { }
-        );
-
-        m_window.swap_buffers();
-        
+        // We consumed as much time as we can from the accumulated residual time. 
+        // It is now time to draw the results to the screen. 
+        // This again produces time to consume, and we go back to the beginning of the loop. 
+        draw();    
     }
 
     destroy();
@@ -190,7 +177,9 @@ void Application::update( const double dt )
 //----------------------------------------------------------------
 void Application::draw() 
 {
-    
+    graphics::gl::clear( { graphics::gl::FramebufferBitFlag::Color, graphics::gl::FramebufferBitFlag::Depth } );
+    m_draw_callback();
+    m_window.swap_buffers();
 }
 
 //----------------------------------------------------------------

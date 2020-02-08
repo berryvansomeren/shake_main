@@ -48,6 +48,11 @@ public:
         return m_total_run_time - m_total_simulation_time;
     }
 
+    inline void close()
+    {
+        m_window.set_should_close();
+    }
+
     void run();
     void init();
     void update( const double dt );
