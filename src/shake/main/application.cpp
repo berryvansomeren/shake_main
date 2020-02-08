@@ -1,23 +1,10 @@
 #include "application.hpp"
 
-#include <vector>
-#include <memory>
-
 #include "shake/content/content_manager.hpp"
-#include "shake/core/math/math.hpp"
-#include "shake/core/process_manager.hpp"
-#include "shake/core/type_traits/lexical_cast.hpp"
-#include "shake/graphics/camera.hpp"
 #include "shake/graphics/context.hpp"
-
-#include "shake/graphics/draw.hpp"
-#include "shake/graphics/draw_text.hpp"
 #include "shake/graphics/gl/gl.hpp"
-#include "shake/graphics/geometry/geometry_3d.hpp"
-#include "shake/graphics/material/uniform.hpp"
 #include "shake/hid/keyboard.hpp"
 #include "shake/hid/mouse.hpp"
-#include "shake/io/file_json.hpp"
 
 
 namespace shake {
