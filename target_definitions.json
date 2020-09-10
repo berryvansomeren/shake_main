@@ -1,0 +1,17 @@
+[
+    {
+        "target_name" : "shake_main",
+        "target_type" : "executable",
+        "source_directory_path" : "src/",
+        "dependencies" : [
+            "glm",
+            "json11",
+            "shake_content",
+            "shake_core",
+            "shake_ecs",
+            "shake_graphics",
+            "shake_hid",
+            "shake_io"
+        ]
+    }
+]
